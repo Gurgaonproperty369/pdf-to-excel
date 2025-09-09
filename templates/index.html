@@ -1,1 +1,59 @@
+<!-- templates/index.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PDF → Excel converter</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 760px; margin: 2rem auto; padding: 1rem; }
+      .card { border: 1px solid #ddd; padding: 1rem; border-radius: 8px; }
+      input[type=file] { display:block; margin-bottom:1rem; }
+      label { display:block; margin-top:0.5rem; }
+      .hint { color: #666; font-size: .9rem; }
+    </style>
+  </head>
+
+  <body>
+    <h1>PDF → Excel</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: red;">
+        {% for m in messages %}
+          <li>{{ m }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <form action="{{ url_for('convert') }}" method="post" enctype="multipart/form-data">
+        <label>Select PDF file (max 50MB):</label>
+        <input type="file" name="pdf_file" accept="application/pdf" required />
+
+        <label>Extraction method:</label>
+        <select name="method">
+          <option value="auto">Auto (try camelot → tabula → pdfplumber)</option>
+          <option value="camelot">Camelot (best for well-structured tables, requires Camelot)</option>
+          <option value="tabula">Tabula (Java required)</option>
+          <option value="pdfplumber">PdfPlumber (fallback)</option>
+        </select>
+
+        <label>Pages (optional):</label>
+        <input type="text" name="pages" placeholder="all or 1-3 or 1,3" />
+
+        <label>Camelot flavor (if using Camelot):</label>
+        <select name="camelot_flavor">
+          <option value="lattice">lattice (tables with cell lines)</option>
+          <option value="stream">stream (tables without cell lines)</option>
+        </select>
+
+        <div style="margin-top: 1rem;">
+          <button type="submit">Convert to Excel</button>
+        </div>
+      </form>
+      <p class="hint">If your PDF is scanned (image), you'll need OCR (Tesseract) — see README for options.</p>
+    </div>
+  </body>
+</html>
 
